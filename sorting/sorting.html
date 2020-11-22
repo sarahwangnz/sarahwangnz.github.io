@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Demo</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="./js/Charts.js"></script>
+    <script src="./js/Dataset.js"></script>
+    <script src="./js/SortingAlgos.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        .container {
+            width: 800px;
+            margin: 20px auto;
+            border: 1px solid rgb(122, 234, 234);
+            box-shadow: 4px 4px rgba(122, 234, 234, 0.2);
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .form {
+            margin: auto;
+            padding: 10px;
+            background-color: bisque;
+            width: 100%;
+            border-radius: 5px 5px 0px 0px;
+        }
+
+        button {
+            font-size: 18px;
+            border: 1px solid rgb(122, 234, 234);
+            border-radius: 4px;
+            width: 60px;
+        }
+
+        select {
+            font-size: 18px;
+            width: 300px;
+            border: 1px solid rgb(122, 234, 234);
+            border-radius: 4px;
+        }
+        label {
+            font-size: 14px;
+        }
+        #graph_div {
+            font-size: 18px;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        #desc_div {
+            font-size: 14px;
+            padding: 10px;
+            width: 100%;
+            border-top: 1px solid rgb(122, 234, 234);
+            height: 400px;
+            overflow: scroll;
+            margin-top: 10px;
+        }
+        #summary_div{
+            padding:5px;
+            margin: auto;
+            width:50%;
+            height: 20px;
+            text-align: center;
+            color : rgb(214, 75, 75);
+        }
+        .hide {
+            display: none;
+        }
+
+        pre {
+            font-family: 'Source Code Pro', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form">
+            <select id='algo_select' value=0>
+                <option value=0>Quick Sort</option>
+                <option value=1>Merge Sort</option>
+                <option value=2>Bubble Sort</option>
+                <option value=3>Insertion Sort</option>
+                <option value=4>Selection Sort</option>
+                <option value=5>Shell Sort</option>
+                <option value=6>Heap Sort</option>
+            </select>
+            <button id="go_btn">
+                Go
+            </button>
+            <input type="radio" id="age1" name="speed" value=2000>
+            <label for="age1">Very Slow</label>
+            <input type="radio" id="age1" name="speed" value=1000>
+            <label for="age1">Slow</label>
+            <input type="radio" id="age2" name="speed" value=100>
+            <label for="age2">Medium</label>
+            <input type="radio" id="age3" name="speed" value=10>
+            <label for="age3">Fast</label>
+            <input checked=true  type="radio" id="age3" name="speed" value=1>
+            <label for="age3">Fastest</label>
+        </div>
+        <div id="summary_div"> </div>
+        <div id="graph_div"> </div>
+        <div id="desc_div">
+<pre id='qs'>
+    const QuickSort = (array) => {
+        if (array.length < 2) {
+            return array;
+        }
+        var pivot = array[0];
+        var leftArray = [];
+        var rightArray = [];
+
+        for (var i = 1; i < array.length; i++) {
+            if (array[i] > pivot) {
+                rightArray.push(array[i]);
+            } else {
+                leftArray.push(array[i]);
+            }
+        }
+        return QuickSort(leftArray).concat(pivot, QuickSort(rightArray));
+    }
+</pre>
+<pre id='ms' class="hide">
+    function merge(left, right) =>{
+        let resultArray = [], leftIndex = 0, rightIndex = 0;
+    
+        while (leftIndex < left.length && rightIndex < right.length) {
+            if (left[leftIndex] < right[rightIndex]) {
+                resultArray.push(left[leftIndex]);
+                leftIndex++; 
+            } else {
+                resultArray.push(right[rightIndex]);
+                rightIndex++; 
+            }
+        }
+
+        return resultArray
+            .concat(left.slice(leftIndex))
+            .concat(right.slice(rightIndex));
+    }
+
+    const MergeSort = (array) => {
+        if (array.length <= 1) {
+            return array;
+        }
+        const middle = Math.floor(array.length / 2);
+    
+        const left = array.slice(0, middle);
+        const right = array.slice(middle);
+        result = merge(
+            MergeSort(left), MergeSort(right)
+        );
+        return result;
+    }
+</pre>
+<pre id='bs' class="hide">
+    const BubbleSort = (array) => {
+        let len = array.length;
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < len; j++) {
+                if (array[j] > array[j + 1]) {
+                    let tmp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = tmp;
+                }
+            }
+        }
+        return array;
+    };    
+</pre>
+<pre id='is' class="hide">
+    const InsertionSort = (array) => {
+        let n = array.length;
+        for (let i = 1; i < n; i++) {
+            let current = array[i];
+            let j = i - 1;
+            while ((j > -1) && (current < array[j])) {
+                array[j + 1] = array[j];
+                j--;
+            }
+            array[j + 1] = current;
+        }
+        return array;
+    }
+</pre>
+<pre id='ss' class="hide">
+    const SelectionSort = (array) => {
+        for (var i = 0; i < array.length; i++) {
+            var min = i;
+            for (var j = i + 1; j < array.length; j++) {
+                if (array[j] < array[min]) {
+                    min = j;
+                }
+            }
+            var temp = array[i];
+            array[i] = array[min];
+            array[min] = temp;
+        }
+        return array;
+    };    
+</pre>
+<pre id='shellSort' class="hide">
+    const ShellSort = (array) => {
+        let increment = array.length / 2;
+        while (increment > 0) {
+            for (i = increment; i < array.length; i++) {
+                let j = i;
+                let temp = array[i];
+                while (j >= increment && array[j - increment] > temp) {
+                    array[j] = array[j - increment];
+                    j = j - increment;
+                }
+                array[j] = temp;
+            }
+            if (increment == 2) {
+                increment = 1;
+            } else {
+                increment = parseInt(increment * 5 / 11);
+            }
+        }
+        return array;
+    }
+</pre>
+<pre id='heapSort' class="hide">
+    const HeapSort = (array) => {
+        let arrayLength = array.length;
+    
+        for (let i = Math.floor(arrayLength / 2); i >= 0; i -= 1) {
+            heapRoot(array, i, arrayLength);
+        }
+    
+        for (let i = array.length - 1; i > 0; i--) {
+            swap(array, 0, i);
+            arrayLength--;
+            heapRoot(array, 0, arrayLength);
+        }
+    }
+    
+    function swap(array, idxA, idxB) {
+        const temp = array[idxA];
+        array[idxA] = array[idxB];
+        array[idxB] = temp;
+    }
+    
+    function heapRoot(array, i, arrayLength) {
+        let left = 2 * i + 1;
+        let right = 2 * i + 2;
+        let max = i;
+    
+        if (left < arrayLength && array[left] > array[max]) {
+            max = left;
+        }
+    
+        if (right < arrayLength && array[right] > array[max]) {
+            max = right;
+        }
+    
+        if (max != i) {
+            swap(array, i, max);
+            getHeapRoot(array, max, arrayLength);
+        }
+    }
+</pre>
+        </div>
+    </div>
+    <script>
+                
+        let size = 100;
+        let nln = Math.floor(Math.log(size) * size);
+        let nsqr = size * size;
+        const options =
+        {
+            delay: 100,
+            count: 0,
+            width: 800,
+            height: 250,
+            margin: { top: 10, right: 20, bottom: 10, left: 20 },
+            colors : []
+        }
+
+        const algos = [
+            QuickSort,
+            MergeSort,
+            BubbleSort,
+            InsertionSort,
+            SelectionSort,
+            ShellSort, 
+            HeapSort
+        ]
+
+        //dom elements
+        const pres = {
+            0: document.querySelector("#qs"),
+            1: document.querySelector("#ms"),
+            2: document.querySelector("#bs"),
+            3: document.querySelector("#is"),
+            4: document.querySelector("#ss"),
+            5: document.querySelector("#shellSort"),
+            6: document.querySelector("#heapSort"),
+        }
+        
+        const go_btn = document.querySelector("#go_btn");
+        const summary_div = document.querySelector("#summary_div");
+        const algo_select = document.querySelector("#algo_select");
+        //events
+        algo_select.addEventListener('change', (e) => {
+            document.querySelectorAll("pre").forEach(r => {
+                r.classList.add("hide");
+            });
+            pres[e.target.value].classList.remove("hide");
+        }
+        );
+
+
+        go_btn.addEventListener('click', (e) => {
+            const arr = RandomMetrics(1, size)[0];
+            summary_div.innerHTML = '';
+            //get selected speed, 1000, 100, 10 ms
+            options.delay = document.querySelector('input[name=speed]:checked').value;
+            algos[algo_select.value](arr, new PlugIn("graph_div", options).onComplete((e) => {
+                //enable the button now
+                summary_div.innerHTML = `Summary: ${e.target.ops} ops for array[${size}], n*log(n) = ${nln}`;
+                go_btn.disabled = false;
+            }), 0, [...arr]);
+            //disable to prevent user click again
+            go_btn.disabled = true;
+        }
+        );
+    </script>
+</body>
+
+</html>
